@@ -1,7 +1,7 @@
 # Table of Contents
 1. [Running Instructions](README.md#running-instructions)
 2. [Data Structures](README.md#data-structures)
-3. [Algorithm](README.md#algorithm)
+3. [Flow](README.md#flow)
 
 
 # Running Instructions
@@ -26,9 +26,9 @@ The code uses the following data structures to solve the problem.
 > {0: [ip(1), ...], ...}
 
 
-# Algorithm
+# Flow
 
-The code reads input from line and line and follow the below logistics.
+The code reads input from line and line and follow the logistics below.
 
 ![flow chart](images/flow.png)
 

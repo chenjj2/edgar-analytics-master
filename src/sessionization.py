@@ -23,11 +23,14 @@ This function returns the time (in seconds) that a certain ip has been active.
 This function 
 * opens the input and output file
 * does initialization
-* follows the algorithm shown in README
+* follows the flow in README
+* writes remaining ip to output after finishing reading input
+* closes the input and output file
 
 '''
 import sys
 from datetime import datetime
+
 
 def process_header(header):
 	'''
@@ -45,6 +48,8 @@ def process_header(header):
 		else:
 			pass
 	return ip_index, date_index, time_index
+
+
 
 def initialization(line_one, inactive_period, ip_index, date_index, time_index):
 	'''

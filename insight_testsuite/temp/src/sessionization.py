@@ -1,7 +1,52 @@
+'''
+This is the only script to run the code.
+It runs the main function when being called by run.sh.
+
+
+It consists 4 functions.
+-- process_header
+-- initialization
+-- time_search_ip
+-- main
+
+Details of each function as below.
+-- process_header
+This function reads the header line and finds which column contains ip/date/time.
+
+-- initialization
+This function returns all the data structures to store information initialized with data from the first request line.
+
+-- time_search_ip
+This function returns the time (in seconds) that a certain ip has been active.
+
+-- main
+This function 
+* opens the input and output file
+* does initialization
+* follows the algorithm shown in README
+
+'''
 import sys
 from datetime import datetime
 
-def initialization(line_one, inactive_period):
+def process_header(header):
+	'''
+	Finds the index of ip, date, time in the header
+	'''
+
+	cols = header.split(',')
+	for i,col_name in enumerate(cols):
+		if col_name == 'ip':
+			ip_index = i
+		elif col_name == 'date':
+			date_index = i
+		elif col_name == 'time':
+			time_index = i
+		else:
+			pass
+	return ip_index, date_index, time_index
+
+def initialization(line_one, inactive_period, ip_index, date_index, time_index):
 	'''
 	Store previous time step in t_last.
 	Create ip_table and store active ip as { ip: [first_request_time, last_request_time, number_of request] }.
@@ -9,7 +54,8 @@ def initialization(line_one, inactive_period):
 	'''
 
 	# grab data from input line
-	ip, date, time = line_one.split(',')[0:3]
+	col_one = line_one.split(',')
+	ip, date, time = col_one[ip_index], col_one[date_index], col_one[time_index]
 
 	# initialize	
 	t_last = datetime.strptime(date+' '+time, '%Y-%m-%d %H:%M:%S')
@@ -23,7 +69,7 @@ def initialization(line_one, inactive_period):
 
 def time_search_ip(time_table, ip):
 	'''
-	Search how long ip has been active.
+	Search how long an ip has been active.
 	'''
 	for prev_active_time in time_table.keys():
 		if ip in time_table[prev_active_time]:
@@ -40,18 +86,20 @@ def main(input_file, inactive_file, output_file):
 
 	# process input and output
 	with open(input_file,'r') as fin:
-		# skip header
-		fin.readline()
+		# read header
+		header = fin.readline()
+		ip_index, date_index, time_index = process_header(header)
+
 		with open(output_file,'w') as fout:
 
 			# initialization
 			line_one = fin.readline()
-			t_last, ip_table, ip_order, time_table = initialization(line_one, inactive_period)
+			t_last, ip_table, ip_order, time_table = initialization(line_one, inactive_period, ip_index, date_index, time_index)
 
 			# read input from line 2 on and process
 			for num, line in enumerate(fin, 2):
-				ip, date, time = line.split(',')[0:3]
-
+				columns = line.split(',')
+				ip, date, time = columns[ip_index], columns[date_index], columns[time_index]
 
 				# UPDATE time_table
 				t_now = datetime.strptime(date+' '+time, '%Y-%m-%d %H:%M:%S')
@@ -138,6 +186,10 @@ def main(input_file, inactive_file, output_file):
 	fout.close()
 
 	return None
+
+
+
+
 
 if __name__ == '__main__':
 	main(sys.argv[1], sys.argv[2], sys.argv[3])
